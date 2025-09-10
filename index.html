@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하루 일정 플래너</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="sd.js"></script>
+</head>
+<body class="dark">
+  <div class="container">
+    <h1>하루 일정 플래너</h1>
+    <button id="theme-toggle">라이트 모드 토글</button>
+    <div class="form-section">
+      <input type="text" id="task-input" placeholder="할 일 입력">
+      <input type="time" id="deadline-input" step="1800" placeholder="목표 시간 (30분 간격)">
+      <select id="category-select">
+        <option>업무</option>
+        <option>개인</option>
+        <option>운동</option>
+      </select>
+      <button id="add-button">추가</button>
+    </div>
+    <div class="schedule-list" id="schedule-list">
+
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
