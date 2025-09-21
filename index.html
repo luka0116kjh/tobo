@@ -1,31 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>하루 To Do</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>하루 To Do</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="light">
-  <div class="app">
-    <header class="header">
+  <div class="tasks-container">
+    <header>
       <h1>하루 To Do</h1>
-      <button id="modeToggle">다크 모드</button>
+      <button id="modeToggle" title="다크/라이트 전환">◑</button>
     </header>
-
-    <section class="input-section">
-      <input type="text" id="todoInput" placeholder="할 일을 입력하세요" />
-      <button id="addBtn">추가</button>
-    </section>
-
-    <ul id="todoList" class="todo-list"></ul>
-
-    <footer class="footer">
-      <small id="taskCount">총 할 일: 0개</small>
+    <main>
+      <ul id="todoList" class="todo-list"></ul>
+      <form id="todoForm" class="input-bar">
+        <input type="text" id="todoInput" placeholder="작업 추가" autocomplete="off" />
+        <button type="submit" id="addBtn" aria-label="추가">＋</button>
+      </form>
+    </main>
+    <footer>
+      <span id="taskCount">할 일: 0</span>
     </footer>
   </div>
-
-  <script src="to.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
-
