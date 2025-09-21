@@ -3,6 +3,7 @@ const addBtn = document.getElementById("addBtn");
 const todoList = document.getElementById("todoList");
 const taskCount = document.getElementById("taskCount");
 const modeToggle = document.getElementById("modeToggle");
+const todoForm = document.getElementById("todoForm");
 
 const STORAGE_KEY = "todoapp-tasks";
 const MODE_KEY = "todoapp-darkmode";
@@ -12,16 +13,10 @@ let darkMode = localStorage.getItem(MODE_KEY) === "true";
 
 
 function updateMode() {
-  if (darkMode) {
-    document.body.classList.add("dark");
-    modeToggle.textContent = "화이트 모드";
-  } else {
-    document.body.classList.remove("dark");
-    modeToggle.textContent = "다크 모드";
-  }
+  document.body.classList.toggle("dark", darkMode);
+  modeToggle.textContent = darkMode ? "☀" : "◑";
 }
 updateMode();
-
 
 function addTask(text) {
   if (!text.trim()) return;
@@ -29,7 +24,7 @@ function addTask(text) {
     id: Date.now().toString(),
     text: text.trim(),
     completed: false,
-    important: false,
+    important: false
   });
   saveAndRender();
 }
@@ -39,6 +34,7 @@ function deleteTask(id) {
   tasks = tasks.filter(t => t.id !== id);
   saveAndRender();
 }
+
 
 function toggleComplete(id) {
   tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t);
@@ -56,33 +52,33 @@ function render() {
   todoList.innerHTML = "";
   tasks.forEach(task => {
     const li = document.createElement("li");
-    li.className = "todo-item";
-    if (task.completed) li.classList.add("completed");
-    if (task.important) li.classList.add("important");
-    li.draggable = true;
-    li.dataset.id = task.id;
+    li.className = "todo-item" + (task.completed ? " completed" : "");
 
+    const leftDiv = document.createElement("div");
+    leftDiv.className = "left";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = task.completed;
     checkbox.addEventListener("change", () => toggleComplete(task.id));
-    li.appendChild(checkbox);
-
+    leftDiv.appendChild(checkbox);
 
     const span = document.createElement("span");
     span.textContent = task.text;
-    li.appendChild(span);
-
+    leftDiv.appendChild(span);
 
     const impBtn = document.createElement("button");
+    impBtn.className = "important-btn";
     impBtn.textContent = task.important ? "★" : "☆";
-    impBtn.title = "중요 표시 토글";
+    impBtn.title = "중요 표시";
     impBtn.addEventListener("click", () => toggleImportant(task.id));
-    li.appendChild(impBtn);
+    leftDiv.appendChild(impBtn);
+
+    li.appendChild(leftDiv);
 
 
     const delBtn = document.createElement("button");
+    delBtn.className = "del-btn";
     delBtn.textContent = "삭제";
     delBtn.title = "삭제";
     delBtn.addEventListener("click", () => deleteTask(task.id));
@@ -90,10 +86,8 @@ function render() {
 
     todoList.appendChild(li);
   });
-
-  taskCount.textContent = `총 할 일: ${tasks.length}개`;
+  taskCount.textContent = `할 일: ${tasks.length}`;
 }
-
 
 function saveAndRender() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -101,64 +95,18 @@ function saveAndRender() {
 }
 
 
+todoForm.addEventListener("submit", e => {
+  e.preventDefault();
+  addTask(todoInput.value);
+  todoInput.value = "";
+});
+
+
 modeToggle.addEventListener("click", () => {
   darkMode = !darkMode;
   localStorage.setItem(MODE_KEY, darkMode);
   updateMode();
 });
-
-
-addBtn.addEventListener("click", () => {
-  addTask(todoInput.value);
-  todoInput.value = "";
-  todoInput.focus();
-});
-todoInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    addTask(todoInput.value);
-    todoInput.value = "";
-  }
-});
-
-
-let dragSrcEl = null;
-
-function handleDragStart(e) {
-  dragSrcEl = e.target;
-  e.dataTransfer.effectAllowed = "move";
-  e.dataTransfer.setData("text/html", e.target.outerHTML);
-  e.target.classList.add("dragging");
-}
-
-function handleDragOver(e) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = "move";
-  return false;
-}
-
-function handleDrop(e) {
-  e.stopPropagation();
-  if (dragSrcEl !== e.target && e.target.classList.contains("todo-item")) {
-    const fromId = dragSrcEl.dataset.id;
-    const toId = e.target.dataset.id;
-
-  
-    const fromIndex = tasks.findIndex(t => t.id === fromId);
-    const toIndex = tasks.findIndex(t => t.id === toId);
-    tasks.splice(toIndex, 0, tasks.splice(fromIndex,1)[0]);
-    saveAndRender();
-  }
-  return false;
-}
-
-function handleDragEnd(e) {
-  e.target.classList.remove("dragging");
-}
-
-todoList.addEventListener("dragstart", handleDragStart);
-todoList.addEventListener("dragover", handleDragOver);
-todoList.addEventListener("drop", handleDrop);
-todoList.addEventListener("dragend", handleDragEnd);
 
 
 render();
